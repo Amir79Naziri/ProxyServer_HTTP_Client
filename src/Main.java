@@ -1,4 +1,4 @@
-import Server.Server;
+import ServerSocketHandler.Server;
 
 public class Main
 {

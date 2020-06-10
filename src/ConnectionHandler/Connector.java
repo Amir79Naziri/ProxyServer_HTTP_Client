@@ -1,6 +1,6 @@
 package ConnectionHandler;
 
-import Client.ClientRequest;
+import ClientRequest.ClientRequest;
 
 
 public class Connector implements Runnable

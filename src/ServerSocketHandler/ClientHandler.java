@@ -1,4 +1,4 @@
-package Server;
+package ServerSocketHandler;
 
 import ConnectionHandler.Executor;
 import Storage.RequestsStorage;
@@ -38,7 +38,7 @@ public class ClientHandler implements Runnable
             System.err.println (e.getMessage ());
         } catch (SocketException e)
         {
-            System.err.println ("Client " + code + " 's connection Terminated");
+            System.err.println ("ClientRequest " + code + " 's connection Terminated");
         } catch (IOException e)
         {
             e.printStackTrace ();

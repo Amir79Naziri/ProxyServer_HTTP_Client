@@ -27,6 +27,25 @@ public class Executor implements Runnable
         pool = Executors.newCachedThreadPool ();
     }
 
+    /**
+     * creates a new Executor
+     * @param clientRequest client requests
+     */
+    public Executor (ClientRequest clientRequest)
+    {
+        clientRequests = new ArrayList<> ();
+        clientRequests.add (clientRequest);
+        pool = Executors.newCachedThreadPool ();
+    }
+
+    /**
+     * get pool
+     * @return pool
+     */
+    public ExecutorService getPool () {
+        return pool;
+    }
+
     @Override
     public void run () {
         if (clientRequests == null)
@@ -34,12 +53,15 @@ public class Executor implements Runnable
         for (ClientRequest clientRequest : clientRequests)
         {
             try {
-                Thread.sleep (3000);
+                Thread.sleep (500);
             } catch (InterruptedException e)
             {
-                e.printStackTrace ();
+                System.out.println (e.getMessage ());
+                pool.shutdownNow ();
+                return;
             }
             pool.execute (new Connector (clientRequest));
         }
+        pool.shutdown ();
     }
 }

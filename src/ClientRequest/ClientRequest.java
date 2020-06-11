@@ -15,6 +15,7 @@ import java.util.*;
  */
 public class ClientRequest implements Serializable
 {
+    private long code;
     private URL url;
     private ResponseStorage responseStorage;
     private boolean followRedirect;
@@ -42,7 +43,7 @@ public class ClientRequest implements Serializable
     public ClientRequest (String url, boolean followRedirect)
             throws MalformedURLException
     {
-
+        code = System.currentTimeMillis ();
         this.url = new URL (url);
         this.name = "MyRequest";
         this.followRedirect = followRedirect;
@@ -68,6 +69,7 @@ public class ClientRequest implements Serializable
     public ClientRequest (boolean followRedirect, String name,
                           RequestType requestType)
     {
+        code = System.currentTimeMillis ();
         this.name = name;
         this.followRedirect = followRedirect;
         customHeaders = new HashMap<> ();
@@ -122,6 +124,13 @@ public class ClientRequest implements Serializable
      * @param uploadBinaryFile binaryFile
      */
     public void addUploadBinaryFile (File uploadBinaryFile) {
+        if (uploadBinaryFile == null || !uploadBinaryFile.exists () ||
+                !uploadBinaryFile.isAbsolute ()) {
+            {
+                this.uploadBinaryFile = null;
+                return;
+            }
+        }
         this.uploadBinaryFile =
                 uploadBinaryFile;
     }
@@ -324,9 +333,8 @@ public class ClientRequest implements Serializable
 
     /**
      * print result
-     * @param url url
      */
-    public synchronized void printResult (String url)
+    public synchronized void printResult ()
     {
         responseStorage.printTimeAndReadDetails ();
         System.out.println ();
@@ -484,16 +492,26 @@ public class ClientRequest implements Serializable
         }
     }
 
+    /**
+     *
+     * @return getUploadBinaryFile
+     */
     public File getUploadBinaryFile () {
         return uploadBinaryFile;
     }
 
+    /**
+     *
+     * @return isFollowRedirect
+     */
     public boolean isFollowRedirect () {
         return followRedirect;
     }
 
-
-
+    /**
+     *
+     * @return addressOfFileForSaveOutput
+     */
     public String getAddressOfFileForSaveOutput () {
         return addressOfFileForSaveOutput;
     }
@@ -527,5 +545,18 @@ public class ClientRequest implements Serializable
      */
     public ExtraData getExtraData () {
         return extraData;
+    }
+
+    @Override
+    public boolean equals (Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClientRequest)) return false;
+        ClientRequest that = (ClientRequest) o;
+        return code == that.code;
+    }
+
+    @Override
+    public int hashCode () {
+        return Objects.hash (code);
     }
 }

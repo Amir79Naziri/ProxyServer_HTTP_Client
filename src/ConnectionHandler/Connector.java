@@ -2,12 +2,20 @@ package ConnectionHandler;
 
 import ClientRequest.ClientRequest;
 
-
+/**
+ * this class connect a client request to server
+ *
+ * @author Amir Naziri
+ */
 public class Connector implements Runnable
 {
     private ClientRequest clientRequest;
 
-    public Connector (ClientRequest clientRequest)
+    /**
+     * create new connector
+     * @param clientRequest clientRequest
+     */
+    protected Connector (ClientRequest clientRequest)
     {
         this.clientRequest = clientRequest;
     }
@@ -44,7 +52,7 @@ public class Connector implements Runnable
                                 clientRequest.isShouldSaveOutputInFile (),
                                 clientRequest.getAddressOfFileForSaveOutput ());
                     }
-                    clientRequest.printResult (url);
+                    clientRequest.printResult ();
                     return;
                 } catch (FollowRedirectException e)
                 {

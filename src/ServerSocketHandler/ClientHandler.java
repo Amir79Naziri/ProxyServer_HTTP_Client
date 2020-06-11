@@ -31,9 +31,9 @@ public class ClientHandler implements Runnable
             Executor executor = new Executor (requestsStorage.getClientRequests ());
             executor.run ();
             sendData (connection.getOutputStream ());
-        } catch (ClassNotLoadedException e)
+        } catch (ClassNotFoundException e)
         {
-            System.err.println (e.getMessage ());
+            System.err.println ("Some Thing went Wrong while reading from Client");
         } catch (SocketException e)
         {
             System.err.println ("ClientRequest " + code + " 's connection Terminated");
@@ -53,14 +53,11 @@ public class ClientHandler implements Runnable
 
 
     private void receiveData (InputStream serverInputStream) throws IOException,
-            ClassNotLoadedException
+            ClassNotFoundException
     {
         try (ObjectInputStream in = new ObjectInputStream (serverInputStream)) {
             requestsStorage = (RequestsStorage)in.readObject ();
             System.out.println ("<- data received from client " + code);
-        } catch (ClassNotFoundException e)
-        {
-            throw new ClassNotLoadedException ("Some Thing went Wrong while reading from Client");
         }
     }
 

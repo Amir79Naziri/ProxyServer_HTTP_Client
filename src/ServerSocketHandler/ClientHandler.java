@@ -28,8 +28,6 @@ public class ClientHandler implements Runnable
 
         try {
             receiveData (connection.getInputStream ());
-            if (requestsStorage == null)
-                throw new ClassNotLoadedException ("Data couldn't load");
             Executor executor = new Executor (requestsStorage.getClientRequests ());
             executor.run ();
             sendData (connection.getOutputStream ());
@@ -54,14 +52,15 @@ public class ClientHandler implements Runnable
     }
 
 
-    private void receiveData (InputStream serverInputStream) throws IOException
+    private void receiveData (InputStream serverInputStream) throws IOException,
+            ClassNotLoadedException
     {
         try (ObjectInputStream in = new ObjectInputStream (serverInputStream)) {
             requestsStorage = (RequestsStorage)in.readObject ();
             System.out.println ("<- data received from client " + code);
         } catch (ClassNotFoundException e)
         {
-            System.err.println ("Some Thing went Wrong while reading from Client");
+            throw new ClassNotLoadedException ("Some Thing went Wrong while reading from Client");
         }
     }
 

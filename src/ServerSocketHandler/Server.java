@@ -21,12 +21,13 @@ public class Server
 
     public void startServer ()
     {
-        try (ServerSocket welcomingConnection = new ServerSocket (port)){
+        try (ServerSocket welcomingConnection = new ServerSocket (port)) {
+            System.out.println ("Server Started Waiting for Client");
             int i = 1;
             while (true)
             {
                 pool.execute (new ClientHandler (welcomingConnection.accept (),i));
-                System.out.println ("Server connected to Client " + i);
+                System.out.println ("Server connected to new Client : Client " + i);
                 i++;
             }
         } catch (IOException e)

@@ -22,7 +22,7 @@ public class Server
     public void startServer ()
     {
         try (ServerSocket welcomingConnection = new ServerSocket (port)) {
-            System.out.println ("Server Started Waiting for Client");
+            System.out.println ("Server Started \nWaiting for Client .....");
             int i = 1;
             while (true)
             {

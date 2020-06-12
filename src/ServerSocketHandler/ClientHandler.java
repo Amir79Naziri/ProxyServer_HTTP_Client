@@ -1,9 +1,8 @@
 package ServerSocketHandler;
 
+
 import ConnectionHandler.Executor;
 import Storage.RequestsStorage;
-import com.sun.jdi.ClassNotLoadedException;
-
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -26,47 +25,83 @@ public class ClientHandler implements Runnable
     @Override
     public void run () {
 
+        ObjectOutputStream out = null;
+        ObjectInputStream in = null;
         try {
-            receiveData (connection.getInputStream ());
+            in = receiveData (connection.getInputStream ());
             Executor executor = new Executor (requestsStorage.getClientRequests ());
-            executor.run ();
-            sendData (connection.getOutputStream ());
+            new Thread (executor).start ();
+            while (!executor.getPool ().isTerminated ())
+            {
+                Thread.sleep (500);
+            }
+            out = sendData (connection.getOutputStream ());
         } catch (ClassNotFoundException e)
         {
             System.err.println ("Some Thing went Wrong while reading from Client");
         } catch (SocketException e)
         {
-            System.err.println ("ClientRequest " + code + " 's connection Terminated");
-        } catch (IOException e)
-        {
             e.printStackTrace ();
+            System.err.println ("ClientRequest " + code + " 's connection Terminated");
+        } catch (InterruptedException | IOException e)
+        {
+            System.err.println (e.getMessage ());
         } finally
         {
             try {
-                connection.close ();
-            } catch (IOException e)
+                if (in != null)
+                    in.close ();
+            }
+            catch (SocketException ignore)
             {
-                e.printStackTrace ();
+            }
+            catch (IOException e)
+            {
+                System.err.println ("Some thing went wrong in closing ServerInputStream");
+            }
+            try {
+
+                if (out != null)
+                    out.close ();
+            }
+            catch (SocketException ignore)
+            {
+            }
+            catch (IOException e)
+            {
+                System.err.println ("Some thing went wrong in closing ServerOutputStream");
+            }
+            try {
+                connection.close ();
+                System.out.println ("Client " + code + " closed");
+            }
+            catch (SocketException ignore)
+            {
+            }
+            catch (IOException e)
+            {
+                System.err.println ("Some thing went wrong in closing client " + code +
+                        "connection");
             }
         }
     }
 
 
-    private void receiveData (InputStream serverInputStream) throws IOException,
+    private ObjectInputStream receiveData (InputStream serverInputStream) throws IOException,
             ClassNotFoundException
     {
-        try (ObjectInputStream in = new ObjectInputStream (serverInputStream)) {
-            requestsStorage = (RequestsStorage)in.readObject ();
-            System.out.println ("<- data received from client " + code);
-        }
+        ObjectInputStream in = new ObjectInputStream (serverInputStream);
+        requestsStorage = (RequestsStorage)in.readObject ();
+        System.out.println ("<- data received from client " + code);
+        return in;
     }
 
-    private void sendData (OutputStream serverOutputStream) throws IOException
+    private ObjectOutputStream sendData (OutputStream serverOutputStream) throws IOException
     {
-        try (ObjectOutputStream out = new ObjectOutputStream (serverOutputStream)) {
-            out.writeObject (requestsStorage);
-            System.out.println ("-> data sent to client " + code);
-        }
+        ObjectOutputStream out = new ObjectOutputStream (serverOutputStream);
+        out.writeObject (requestsStorage);
+        System.out.println ("-> data sent to client " + code);
+        return out;
     }
 
 }

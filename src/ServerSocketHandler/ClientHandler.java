@@ -7,14 +7,23 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
-
+/**
+ * this class represents server's client Handler
+ *
+ * @author Amir Naziri
+ */
 public class ClientHandler implements Runnable
 {
 
     private Socket connection;
-    private int code;
+    private int code; // code of client
     private RequestsStorage requestsStorage;
 
+    /**
+     * creates new Client Handler
+     * @param connection connection
+     * @param code code
+     */
     public ClientHandler (Socket connection, int code)
     {
         this.connection = connection;
@@ -86,7 +95,13 @@ public class ClientHandler implements Runnable
         }
     }
 
-
+    /**
+     * receive data from client
+     * @param serverInputStream serverInputStream
+     * @return inputStream
+     * @throws IOException IOException
+     * @throws ClassNotFoundException ClassNotFoundException
+     */
     private ObjectInputStream receiveData (InputStream serverInputStream) throws IOException,
             ClassNotFoundException
     {
@@ -96,6 +111,12 @@ public class ClientHandler implements Runnable
         return in;
     }
 
+    /**
+     * send data to client
+     * @param serverOutputStream serverOutputStream
+     * @return outputStream
+     * @throws IOException IOException
+     */
     private ObjectOutputStream sendData (OutputStream serverOutputStream) throws IOException
     {
         ObjectOutputStream out = new ObjectOutputStream (serverOutputStream);

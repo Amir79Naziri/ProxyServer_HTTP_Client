@@ -6,19 +6,29 @@ import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * this class represents the Server
+ *
+ * @author Amir Naziri
+ */
 public class Server
 {
     private int port;
     private ExecutorService pool;
 
-
+    /**
+     * creates a new Server
+     * @param port port
+     */
     public Server (int port)
     {
         this.port = port;
         pool = Executors.newCachedThreadPool ();
     }
 
-
+    /**
+     * start Server
+     */
     public void startServer ()
     {
         try (ServerSocket welcomingConnection = new ServerSocket (port)) {

@@ -50,11 +50,10 @@ public class ClientHandler implements Runnable
             System.err.println ("Some Thing went Wrong while reading from Client");
         } catch (SocketException e)
         {
-            e.printStackTrace ();
             System.err.println ("ClientRequest " + code + " 's connection Terminated");
         } catch (InterruptedException | IOException e)
         {
-            System.err.println (e.getMessage ());
+            System.err.println ("Some thing went wrong");
         } finally
         {
             try {

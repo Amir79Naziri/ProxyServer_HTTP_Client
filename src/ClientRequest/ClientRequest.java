@@ -184,6 +184,14 @@ public class ClientRequest implements Serializable
     }
 
     /**
+     * changes response Storage
+     * @param responseStorage responseStorage
+     */
+    public void setResponseStorage (ResponseStorage responseStorage) {
+        this.responseStorage = responseStorage;
+    }
+
+    /**
      * get Queries in form of a String for appending to Url
      * @return query String
      */

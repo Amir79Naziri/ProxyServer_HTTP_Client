@@ -18,17 +18,20 @@ public class ClientHandler implements Runnable
     private Socket connection;
     private int code; // code of client
     private RequestsStorage requestsStorage;
+    private ViewServer viewServer;
 
     /**
      * creates new Client Handler
      * @param connection connection
      * @param code code
+     * @param viewServer viewServer
      */
-    public ClientHandler (Socket connection, int code)
+    public ClientHandler (Socket connection, int code, ViewServer viewServer)
     {
         this.connection = connection;
         this.code = code;
         requestsStorage = null;
+        this.viewServer = viewServer;
     }
 
     @Override
@@ -47,13 +50,19 @@ public class ClientHandler implements Runnable
             out = sendData (connection.getOutputStream ());
         } catch (ClassNotFoundException e)
         {
-            System.err.println ("Some Thing went Wrong while reading from Client");
+            System.err.println ("Some Thing went Wrong while reading from Client " + code);
+            viewServer.getTextArea ().append ("\nSome Thing went Wrong while " +
+                    "reading from Client " + code);
         } catch (SocketException e)
         {
             System.err.println ("ClientRequest " + code + " 's connection Terminated");
+            viewServer.getTextArea ().append ("\nClientRequest " + code +
+                    " 's connection Terminated");
         } catch (InterruptedException | IOException e)
         {
-            System.err.println ("Some thing went wrong");
+            System.err.println ("Some thing went wrong with Client " + code);
+            viewServer.getTextArea ().append ("\nSome thing went wrong with Client " +
+                    code);
         } finally
         {
             try {
@@ -65,7 +74,10 @@ public class ClientHandler implements Runnable
             }
             catch (IOException e)
             {
-                System.err.println ("Some thing went wrong in closing ServerInputStream");
+                System.err.println ("Some thing went wrong in closing ServerInputStream" +
+                        " in Client " + code);
+                viewServer.getTextArea ().append ("\nSome thing went " +
+                        "wrong in closing ServerInputStream in Client " + code);
             }
             try {
 
@@ -77,11 +89,15 @@ public class ClientHandler implements Runnable
             }
             catch (IOException e)
             {
-                System.err.println ("Some thing went wrong in closing ServerOutputStream");
+                System.err.println ("Some thing went wrong in closing ServerOutputStream" +
+                        " in Client " + code);
+                viewServer.getTextArea ().append ("\nSome thing went " +
+                        "wrong in closing ServerOutputStream in Client " + code);
             }
             try {
                 connection.close ();
                 System.out.println ("Client " + code + " closed");
+                viewServer.getTextArea ().append ("\nClient " + code + " closed");
             }
             catch (SocketException ignore)
             {
@@ -89,7 +105,10 @@ public class ClientHandler implements Runnable
             catch (IOException e)
             {
                 System.err.println ("Some thing went wrong in closing client " + code +
-                        "connection");
+                        " connection");
+                viewServer.getTextArea ().append ("\nSome thing went wrong in" +
+                        " closing client "
+                + code + " connection");
             }
         }
     }
@@ -107,6 +126,7 @@ public class ClientHandler implements Runnable
         ObjectInputStream in = new ObjectInputStream (serverInputStream);
         requestsStorage = (RequestsStorage)in.readObject ();
         System.out.println ("<- data received from client " + code);
+        viewServer.getTextArea ().append ("\n<- data received from client " + code);
         return in;
     }
 
@@ -121,6 +141,7 @@ public class ClientHandler implements Runnable
         ObjectOutputStream out = new ObjectOutputStream (serverOutputStream);
         out.writeObject (requestsStorage);
         System.out.println ("-> data sent to client " + code);
+        viewServer.getTextArea ().append ("\n-> data sent to client " + code);
         return out;
     }
 

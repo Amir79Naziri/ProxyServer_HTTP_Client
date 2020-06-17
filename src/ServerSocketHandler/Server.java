@@ -2,7 +2,6 @@ package ServerSocketHandler;
 
 
 
-import javax.swing.*;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
@@ -17,7 +16,7 @@ public class Server
 {
     private int port;
     private ExecutorService pool;
-    private ViewServer viewServer;
+    private ViewStatus viewStatus;
 
     /**
      * creates a new Server
@@ -27,7 +26,7 @@ public class Server
     {
         this.port = port;
         pool = Executors.newCachedThreadPool ();
-        viewServer = new ViewServer ();
+        viewStatus = new ViewStatus ();
     }
 
     /**
@@ -35,20 +34,20 @@ public class Server
      */
     public void startServer ()
     {
-        viewServer.setVisible (true);
+        viewStatus.setVisible (true);
         try (ServerSocket welcomingConnection = new ServerSocket (port)) {
             System.out.println ("Server Started \nWaiting for Client .....");
-            viewServer.getTextArea ().setText ("Server Started \nWaiting for Client .....");
+            viewStatus.getTextArea ().setText ("Server Started \nWaiting for Client .....");
             int i = 1;
             while (true)
             {
-                pool.execute (new ClientHandler (welcomingConnection.accept (),i,viewServer));
+                pool.execute (new ClientHandler (welcomingConnection.accept (),i, viewStatus));
                 System.out.println ("Server connected to new Client : Client " + i);
                 if (i == 1)
-                    viewServer.getTextArea ().setText ("Server" +
+                    viewStatus.getTextArea ().setText ("Server" +
                             " connected to new Client : Client " + i);
                 else
-                    viewServer.getTextArea ().append ("\nServer connected" +
+                    viewStatus.getTextArea ().append ("\nServer connected" +
                             " to new Client : Client " + i);
                 i++;
             }

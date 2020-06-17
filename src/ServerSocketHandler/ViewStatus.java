@@ -9,14 +9,14 @@ import java.awt.*;
  *
  * @author Amir Naziri
  */
-public class ViewServer extends JFrame
+public class ViewStatus extends JFrame
 {
 
     private JTextArea textArea;
     /**
-     * creates new ViewServer
+     * creates new ViewStatus
      */
-    public ViewServer ()
+    public ViewStatus ()
     {
         setBackground (Color.WHITE);
         setSize (600,600);
